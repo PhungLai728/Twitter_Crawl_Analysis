@@ -10,7 +10,6 @@ from nltk.tokenize import word_tokenize
 # Read data
 all_info = pd.read_csv('covid19.csv')
 tweet_content = all_info['tweet content']
-year_posted = all_info['year']
 month_posted = all_info['month']
 day_posted = all_info['day']
 hour_posted = all_info['hour']
@@ -19,17 +18,11 @@ tweet_friends = all_info['friends']
 
 # Check the unique of the data 
 tweet_content_u = tweet_content.unique().tolist()
-year_posted_u = year_posted.unique().tolist()
 month_posted_u = month_posted.unique().tolist()
 day_posted_u = day_posted.unique().tolist()
 hour_posted_u = hour_posted.unique().tolist()
 tweet_source_u = tweet_source.unique().tolist()
 tweet_friends_u = tweet_friends.unique().tolist()
-
-# Number of tweets in 2019 and 2020
-occurrences = lambda s, lst: (i for i,e in enumerate(lst) if e == s)
-year2019 = len(list(occurrences(2019,year_posted))) # 786
-year2020 = len(list(occurrences(2020,year_posted))) # 1367
 
 # Histogram of monthly usage
 plt.hist(month_posted, bins=12, edgecolor='white', linewidth=1.2)
@@ -82,10 +75,10 @@ for i in range(len(tmp_tweets)):
     cleaned_tweets.append(tmp2)
 
 from wordcloud import WordCloud, STOPWORDS
-temp = ' '.join(cleaned_tweets)
+wc_tweets = ' '.join(cleaned_tweets)
 wordcloud = WordCloud(width = 800, height = 500, 
                 background_color ='white', 
-                min_font_size = 10).generate(temp)
+                min_font_size = 10).generate(wc_tweets)
 plt.figure(figsize = (8, 8), facecolor = None)
 plt.imshow(wordcloud)
 plt.axis("off")
@@ -110,7 +103,10 @@ plot_ngram(cleaned_tweets, ngram_range=(2,2))
 
 from textblob import TextBlob
 sentiment = tweet_content.apply(lambda x:TextBlob(x).sentiment[0])
+subject = tweet_content.apply(lambda x: TextBlob(x).sentiment[1])
 polarity = sentiment.apply(lambda x: 'pos' if x>=0 else 'neg')
+subject_2 = sentiment[subject>0.5]
+polarity_withSubject = subject_2.apply(lambda x: 'pos' if x>=0 else 'neg')
 
 fig, ax = plt.subplots()
 N, bins, patches = ax.hist(polarity, bins=2, edgecolor='white', linewidth=1)
@@ -118,6 +114,14 @@ patches[0].set_facecolor('b')
 patches[1].set_facecolor('r')
 plt.ylabel('count')
 plt.xlabel('polarity')
+plt.show()
+
+fig, ax = plt.subplots()
+N, bins, patches = ax.hist(polarity_withSubject, bins=2, edgecolor='white', linewidth=1)
+patches[0].set_facecolor('b')
+patches[1].set_facecolor('r')
+plt.ylabel('count')
+plt.xlabel('subjectivity')
 plt.show()
 
 print('Well Done!')

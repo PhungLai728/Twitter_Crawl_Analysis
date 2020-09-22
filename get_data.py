@@ -22,13 +22,11 @@ num = 0
 iteration = []
 tweets_collected = []
 id_info = []
-time_posted_year = []
 time_posted_month = []
 time_posted_day = []
 time_posted_hour = []
 tweet_source = []
 tweet_friends = []
-tweet_geo = []
 
 while tweetCount < maxTweets:
     if(maxId <= 0):
@@ -49,19 +47,17 @@ while tweetCount < maxTweets:
         print(tweet.full_text.encode('utf-8'))
         tweets_collected.append(tweet.full_text.encode('utf-8'))
         id_info.append(tweet.id)
-        time_posted_year.append(tweet.user.created_at.year)
         time_posted_month.append(tweet.user.created_at.month)
         time_posted_day.append(tweet.user.created_at.day)
         time_posted_hour.append(tweet.user.created_at.hour)
 
         tweet_source.append(tweet.source)
         tweet_friends.append(tweet.user.friends_count)
-        tweet_geo.append(tweet.geo)
 
         print('saving to excel')
         data_w = {'tweet count': iteration, 'id':id_info, 'tweet content': tweets_collected,
-        'year':time_posted_year, 'month':time_posted_month,'day':time_posted_day,'hour':time_posted_hour,
-        'source':tweet_source, 'friends':tweet_friends, 'geo':tweet_geo}  
+        'month':time_posted_month,'day':time_posted_day,'hour':time_posted_hour,
+        'source':tweet_source, 'friends':tweet_friends}  
         my_csv = pd.DataFrame(data_w)
         name_save = result_path + '.csv' 
         my_csv.to_csv( name_save, index=False)
